@@ -1,3 +1,4 @@
+import java.util.Random;
 import java.util.Scanner;
 
 public class tictactoe {
@@ -5,12 +6,12 @@ public class tictactoe {
     static char[] square = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
     static String winCondition = "";
     static String winSquares = "";
+    static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
         title();
         display();
-
-        gameChoice();
+        chooseGameMode();
     }
 
     static void title() {
@@ -31,11 +32,27 @@ public class tictactoe {
         System.out.println("_____|_____|_____");
         System.out.println("     |     |     ");
         System.out.println("  " + square[7] + "  |  " + square[8] + "  |  " + square[9] + "  ");
-        System.out.println("     |     |     ");
+        System.out.println("     |     |     \n");
     }
 
-    static void gameChoice() {
-        Scanner scanner = new Scanner(System.in);
+    static void chooseGameMode() {
+        System.out.println("Choose game mode:");
+        System.out.println("1. Two Player");
+        System.out.println("2. Play against Computer");
+        System.out.print("Enter 1 or 2: ");
+        int mode = scanner.nextInt();
+        scanner.nextLine();
+
+        if (mode == 1) {
+            gameChoice(true);
+        } else if (mode == 2) {
+            gameChoice(false);
+        } else {
+            System.out.println("Invalid choice. Exiting game.");
+        }
+    }
+
+    static void gameChoice(boolean isTwoPlayer) {
         int choice;
         char xo;
         boolean playerX = true;
@@ -45,12 +62,18 @@ public class tictactoe {
             if (playerX) {
                 xo = 'X';
                 System.out.print("\nPlayer X, enter a number: ");
+                choice = scanner.nextInt();
             } else {
                 xo = 'O';
-                System.out.print("\nPlayer O, enter a number: ");
+                if (isTwoPlayer) {
+                    System.out.print("\nPlayer O, enter a number: ");
+                    choice = scanner.nextInt();
+                } else {
+                    System.out.println("Computer's turn: ");
+                    choice = computerChoice();
+                    System.out.println(choice);
+                }
             }
-
-            choice = scanner.nextInt();
 
             if (choice >= 1 && choice <= 9) {
                 if (square[choice] == (char) ('0' + choice)) {
@@ -60,9 +83,11 @@ public class tictactoe {
                     int result = checkWin();
                     if (result == 1) {
                         System.out.println((playerX ? "Player X" : "Player O") + " wins by " + winCondition + " (" + winSquares + ")!");
+                        playAgain();
                         return;
                     } else if (result == -1) {
                         System.out.println("It's a draw!");
+                        playAgain();
                         return;
                     }
                 } else {
@@ -74,6 +99,15 @@ public class tictactoe {
                 --i;
             }
         }
+    }
+
+    static int computerChoice() {
+        Random random = new Random();
+        int choice;
+        do {
+            choice = random.nextInt(9) + 1;
+        } while (square[choice] != (char) ('0' + choice));
+        return choice;
     }
 
     static int checkWin() {
@@ -118,16 +152,29 @@ public class tictactoe {
             return 1;
         }
 
-        boolean draw = true;
         for (int i = 1; i <= 9; i++) {
             if (square[i] == (char) ('0' + i)) {
-                draw = false;
-                break;
+                return 0;
             }
         }
-        if (draw) return -1;
-
-        return 0;
+        return -1;
     }
-    
+
+    static void playAgain() {
+        System.out.print("Do you want to play again? (y/n): ");
+        char playAgain = scanner.next().charAt(0);
+        if (playAgain == 'y' || playAgain == 'Y') {
+            resetBoard();
+            display();
+            chooseGameMode();
+        } else {
+            System.out.println("Thank you for playing!");
+        }
+    }
+
+    static void resetBoard() {
+        for (int i = 1; i <= 9; i++) {
+            square[i] = (char) ('0' + i);
+        }
+    }
 }
