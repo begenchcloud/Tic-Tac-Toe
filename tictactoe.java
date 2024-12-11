@@ -7,6 +7,8 @@ public class tictactoe {
     static String winCondition = "";
     static String winSquares = "";
     static Scanner scanner = new Scanner(System.in);
+    static char playerXMark = 'X';
+    static char playerOMark = 'O';
 
     public static void main(String[] args) {
         title();
@@ -43,12 +45,32 @@ public class tictactoe {
         int mode = scanner.nextInt();
         scanner.nextLine();
 
+        setCustomMarks();
+
         if (mode == 1) {
             gameChoice(true);
         } else if (mode == 2) {
             gameChoice(false);
         } else {
             System.out.println("Invalid choice. Exiting game.");
+        }
+    }
+
+    static void setCustomMarks() {
+        System.out.print("Enter custom mark for Player X: ");
+        playerXMark = getValidMark();
+        System.out.print("Enter custom mark for Player O: ");
+        playerOMark = getValidMark();
+    }
+
+    static char getValidMark() {
+        while (true) {
+            String input = scanner.nextLine();
+            if (input.length() == 1 && !Character.isWhitespace(input.charAt(0))) {
+                return input.charAt(0);
+            } else {
+                System.out.print("Invalid mark. Please enter a single, non-whitespace character: ");
+            }
         }
     }
 
@@ -60,11 +82,11 @@ public class tictactoe {
         for (int i = 1; i <= 9; ++i) {
             playerX = (i % 2 != 0);
             if (playerX) {
-                xo = 'X';
+                xo = playerXMark;
                 System.out.print("\nPlayer X, enter a number: ");
                 choice = scanner.nextInt();
             } else {
-                xo = 'O';
+                xo = playerOMark;
                 if (isTwoPlayer) {
                     System.out.print("\nPlayer O, enter a number: ");
                     choice = scanner.nextInt();
